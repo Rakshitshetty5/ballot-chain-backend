@@ -4,6 +4,7 @@ const VoterDetails = require('../models/voterDetails.model')
 const User = require('../models/user.model')
 const isValidUser = require('../middleware/isValidUser.middleware')
 const express = require('express');
+const Verification = require('../models/verfication.model');
 const router = express.Router()
 
 router.post('/getOTP', async (req, res) => {
@@ -130,6 +131,30 @@ router.get('/details', isValidUser, async (req, res) => {
         }
     })
 
+})
+
+router.get('/applyVerification', isValidUser, async (req, res) => {
+    //create middleware and check if valid jwt token
+    const voter_id = req.body.voter_id
+    const wallet_address = req.body.wallet_address
+    const voter_details_id = req.user._id
+
+    console.log(voter_details_id)
+
+    let verification = new Verification({
+        voter_id,
+        voter_details_id,
+        wallet_address
+    })
+
+    verification = await verification.save()
+
+    return res.status(201).json({
+        status: 'success',
+        data : {
+            verification
+        }
+    })
 })
 
 module.exports = router

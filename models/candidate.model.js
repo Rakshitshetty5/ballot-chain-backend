@@ -8,7 +8,10 @@ const candidateSchema = new mongoose.Schema({
     voter_id: {
         type: String
     },
-    image: {
+    candidate_image: {
+        type: String
+    },
+    party_image: {
         type: String
     },
     first_name: {
