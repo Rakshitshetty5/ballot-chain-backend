@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
         return next(new AppError('You are not logged in to get access', 401));
     }
 
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET_ADMIN)
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
 
     if(!decoded.isAdmin){
         return next(new AppError('Access Denied!!', 403));

@@ -6,7 +6,7 @@ const GeneralSettings = require('../models/GeneralSetting.model');
 const Candidate = require('../models/candidate.model');
 const Verification = require('../models/verfication.model');
 const User = require('../models/user.model');
-const { decrypt } = require('../utils/crypto')
+const { decrypt, encrypt } = require('../utils/crypto')
 
 // admin login api
 router.post('/login', async (req, res) => {
@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
 
     if(decrypt(admin.password) !== password){
         return res.status(400).json({
-            message: "Invalid user!"
+            message: "Invalid login credentials!"
         }) 
     }
 
@@ -54,6 +54,8 @@ router.put('/verifyUser', isAdmin, async (req, res) => {
      user.wallet_address = req.body.wallet_address
 
      user = await user.save()
+
+     await Verification.findByIdAndDelete(req.body.verification_id)
      
      //return
      return res.status(201).json({
@@ -71,8 +73,8 @@ router.post('/addCandidate', isAdmin, async (req, res) => {
     const middle_name = req.body.middle_name
     const party = req.body.party
     const address = req.body.address
-    const party_image = req.body.partyImage
-    const candidate_image = req.body.candidateImage
+    const party_image = req.body.party_image
+    const candidate_image = req.body.candidate_image
     const email = req.body.email
     const phone = req.body.phone
     const dob = req.body.dob
@@ -102,8 +104,8 @@ router.post('/addCandidate', isAdmin, async (req, res) => {
 
 // api to change voting phase
 router.put('/changeVotingPhase', isAdmin, async (req, res) => {
-    let data = await GeneralSettings.find()
-    data[0].phase = req.body.phase
+    let data = await GeneralSettings.findOne()
+    data.phase = req.body.phase
     data = await data.save()
     return res.status(201).json({
         status: 'success',
@@ -115,7 +117,7 @@ router.put('/changeVotingPhase', isAdmin, async (req, res) => {
 
 //Next
 //api to get generalSettings
-router.put('/getGeneralSettings', isAdmin, async (req, res) => {
+router.get('/getGeneralSettings', isAdmin, async (req, res) => {
     let data = await GeneralSettings.find()
 
     return res.status(201).json({
@@ -130,6 +132,12 @@ router.put('/getGeneralSettings', isAdmin, async (req, res) => {
 //api to reject verification request
 router.put('/deleteVerificationRequest', isAdmin, async (req, res) => {
     let verification_id = req.body.verification_id
+
+    const user = await User.findOne({ voter_id })
+
+    user.hasAppliedForVerification = false
+
+    await user.save()
 
     await Verification.findByIdAndDelete(verification_id)
 
@@ -192,7 +200,7 @@ router.get('/getAllCandidates', isAdmin, async (req, res) => {
     const limit = req.body.limit ?? 10
 
     const offset = (pageNo - 1) * limit
-    const candidates = await Candidate.find().populate('voter_details').skip(offset).limit(limit)
+    const candidates = await Candidate.find().skip(offset).limit(limit)
     //4 pagination
     return res.status(201).json({
         status: 'success',
@@ -202,3 +210,4 @@ router.get('/getAllCandidates', isAdmin, async (req, res) => {
     })
 })
 
+module.exports = router

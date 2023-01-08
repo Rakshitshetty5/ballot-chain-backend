@@ -133,13 +133,24 @@ router.get('/details', isValidUser, async (req, res) => {
 
 })
 
-router.get('/applyVerification', isValidUser, async (req, res) => {
+router.post('/applyVerification', isValidUser, async (req, res) => {
     //create middleware and check if valid jwt token
     const voter_id = req.body.voter_id
     const wallet_address = req.body.wallet_address
     const voter_details_id = req.user._id
 
-    console.log(voter_details_id)
+    if(await Verification.findOne({ voter_id })){
+        return res.status(400).json({
+            status: 'Failure',
+            message : 'Already applied'
+        })
+    }
+
+    const user = await User.findOne({ voter_id })
+
+    user.hasAppliedForVerification = true
+
+    await user.save()
 
     let verification = new Verification({
         voter_id,
@@ -158,3 +169,7 @@ router.get('/applyVerification', isValidUser, async (req, res) => {
 })
 
 module.exports = router
+
+
+//ApplyVerification => if applied set users applied for verification to true
+//Delete verification request after is it accepted or rejected => done

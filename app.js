@@ -47,7 +47,7 @@ const limiter = rateLimit({
 app.use('/voter', limiter)
 
 //Body Parser
-app.use(express.json({ limit: '10kb' })) //body should be less then 10kb
+app.use(express.json({ limit: '4000kb' })) //body should be less then 100kb
 
 //Data Sanitization against Nosql query injection
 app.use(mongoSanitize())
@@ -65,7 +65,10 @@ db()
 app.use(express.json())
 
 const AuthRoute = require('./routes/voter.routes')
+const AdminRoute = require('./routes/admin.routes')
+
 app.use('/voter', AuthRoute)
+app.use('/admin', AdminRoute)
 
 app.use(globalErrorHandler);
 
