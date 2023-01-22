@@ -21,12 +21,12 @@ router.post('/login', async (req, res) => {
 
     const admin = await Admin.findOne({ user_name })
 
+
     if(!admin){
         return res.status(400).json({
             message: "Invalid login credentials"
         }) 
     }
-
     if(decrypt(admin.password) !== password){
         return res.status(400).json({
             message: "Invalid login credentials!"
@@ -133,7 +133,7 @@ router.get('/getGeneralSettings', isAdmin, async (req, res) => {
 router.put('/deleteVerificationRequest', isAdmin, async (req, res) => {
     let verification_id = req.body.verification_id
 
-    const user = await User.findOne({ voter_id })
+    const user = await User.findOne({ voter_id: req.body.voter_id })
 
     user.hasAppliedForVerification = false
 
@@ -166,7 +166,7 @@ router.get('/getPendingVerifications', isAdmin, async (req, res) => {
     const offset = (pageNo - 1) * limit
 
     const pendingRequests = await Verification.find().populate('voter_details').skip(offset).limit(limit)
-
+    console.log(pendingRequests)
     return res.status(201).json({
         status: 'success',
         data : {

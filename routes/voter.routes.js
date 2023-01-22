@@ -123,7 +123,7 @@ router.post('/verifyOTP', async (req, res) => {
 router.get('/details', isValidUser, async (req, res) => {
     //create middleware and check if valid jwt token
     const user = await User.findOne({ voter_id: req.user.voter_id }).populate('voter_details')
-
+    console.log(user)
     return res.status(200).json({
         status: 'success',
         data : {
@@ -137,7 +137,7 @@ router.post('/applyVerification', isValidUser, async (req, res) => {
     //create middleware and check if valid jwt token
     const voter_id = req.body.voter_id
     const wallet_address = req.body.wallet_address
-    const voter_details_id = req.user._id
+    const voter_details_id = req.body.voter_details
 
     if(await Verification.findOne({ voter_id })){
         return res.status(400).json({
@@ -154,7 +154,7 @@ router.post('/applyVerification', isValidUser, async (req, res) => {
 
     let verification = new Verification({
         voter_id,
-        voter_details_id,
+        voter_details: voter_details_id,
         wallet_address
     })
 
