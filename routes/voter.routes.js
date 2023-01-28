@@ -6,6 +6,8 @@ const isValidUser = require('../middleware/isValidUser.middleware')
 const express = require('express');
 const Verification = require('../models/verfication.model');
 const router = express.Router()
+const GeneralSettings = require('../models/GeneralSetting.model');
+const Candidate = require('../models/candidate.model');
 
 router.post('/getOTP', async (req, res) => {
     const { voter_id } = req.body;
@@ -167,6 +169,33 @@ router.post('/applyVerification', isValidUser, async (req, res) => {
         }
     })
 })
+
+router.get('/getGeneralSettings', isValidUser, async (req, res) => {
+    let data = await GeneralSettings.find()
+
+    return res.status(201).json({
+        status: 'success',
+        data : {
+            phase: data[0].phase    
+        }
+    })
+})
+
+//  api to get all candidates
+router.get('/getAllCandidates', isValidUser, async (req, res) => {
+    const pageNo = req.body.pageNo ?? 1
+    const limit = req.body.limit ?? 10
+
+    const offset = (pageNo - 1) * limit
+    const candidates = await Candidate.find().skip(offset).limit(limit)
+    return res.status(201).json({
+        status: 'success',
+        data : {
+            candidates        
+        }
+    })
+})
+
 
 module.exports = router
 
