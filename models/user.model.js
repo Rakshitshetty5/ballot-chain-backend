@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     wallet_address: {
         type: String    
     },
-    digital_id: {
+    pvn: {
         type: String
     },
     isVerified: {

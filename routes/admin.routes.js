@@ -52,7 +52,9 @@ router.put('/verifyUser', isAdmin, async (req, res) => {
      //update users isVerified and add wallet address
      user.isVerified = true
      user.wallet_address = req.body.wallet_address
-
+     console.log(req.body.wallet_address, req.body.voter_id)
+     const pvn = req.body.wallet_address.substring(0,2) + req.body.voter_id + req.body.wallet_address.substring(2)
+     user.pvn = pvn
      user = await user.save()
 
      await Verification.findByIdAndDelete(req.body.verification_id)
