@@ -6,8 +6,9 @@ const Voter = require('../models/voterDetails.model');
 dotenv.config({ path: './config.env' });
 
 mongoose
-  .connect("mongodb://localhost/ballotchain", {
-
+  .connect("mongodb+srv://patilsushiloo47:FoVuzY4uEvJCaBNc@cluster0.vxvljtt.mongodb.net/?retryWrites=true&w=majority", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
   .then(() => console.log('DB connection successful!'));
 

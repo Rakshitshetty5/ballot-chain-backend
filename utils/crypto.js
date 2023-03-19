@@ -7,9 +7,9 @@ module.exports.encrypt = (password) => {
     return ciphertext;
 }
 
-module.exports.decrypt = (password) => {  
-    var bytes  = CryptoJS.AES.decrypt(decodeURIComponent(password), privateKey);
-    var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));    
+module.exports.decrypt = async (password) => {  
+    var bytes  = await CryptoJS.AES.decrypt(decodeURIComponent(password.toString()), privateKey);
+    var decryptedData = await JSON.parse(bytes.toString(CryptoJS.enc.Utf8));    
     return decryptedData;
 }
 

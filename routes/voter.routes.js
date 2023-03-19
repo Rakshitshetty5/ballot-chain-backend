@@ -126,7 +126,6 @@ router.post('/verifyOTP', async (req, res) => {
 router.get('/details', isValidUser, async (req, res) => {
     //create middleware and check if valid jwt token
     const user = await User.findOne({ voter_id: req.user.voter_id }).populate('voter_details')
-    console.log(user)
     return res.status(200).json({
         status: 'success',
         data : {
@@ -177,7 +176,7 @@ router.get('/getGeneralSettings', isValidUser, async (req, res) => {
     return res.status(201).json({
         status: 'success',
         data : {
-            phase: data[0].phase    
+            phase: data[0]?.phase    
         }
     })
 })

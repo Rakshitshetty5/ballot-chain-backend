@@ -27,7 +27,8 @@ router.post('/login', async (req, res) => {
             message: "Invalid login credentials"
         }) 
     }
-    if(decrypt(admin.password) !== password){
+    const decrypted = await decrypt(admin.password)
+    if(decrypted !== password){
         return res.status(400).json({
             message: "Invalid login credentials!"
         }) 
