@@ -82,6 +82,16 @@ router.post('/addCandidate', isAdmin, async (req, res) => {
     const phone = req.body.phone
     const dob = req.body.dob
 
+    const isCandidatePresent = await Candidate.findOne({ email: email  })
+    if(isCandidatePresent){
+        res.status(400).json({
+            status: 'failure',
+            data : {
+                message: 'Email already exists'        
+            }
+        })
+    }
+
     let candidate = new Candidate({
         first_name,
         last_name,
